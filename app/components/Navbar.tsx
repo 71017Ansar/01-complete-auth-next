@@ -1,4 +1,4 @@
-"use client"
+
 import { FC } from "react";
 import {
   Button,
@@ -8,12 +8,14 @@ import {
   Navbar as NextUINav,
 } from "@nextui-org/react";
 import Link from "next/link";
-import { signIn , useSession } from "next-auth/react";
+import { signIn   } from "next-auth/react";
+import { auth } from "@/auth";
 
 interface Props {}
 
-const Navbar: FC<Props> = () => {
-  const { data , status } = useSession();
+const Navbar: FC<Props> =  async() => {
+  // const { data , status } = useSession();
+     const session = await auth();
   return (
     <NextUINav shouldHideOnScroll>
       <NavbarBrand>
@@ -24,9 +26,9 @@ const Navbar: FC<Props> = () => {
 
       <NavbarContent justify="end">
       {
-        status === 'authenticated'?( <button>Log Out</button>):(
+        session?( <button>Log Out</button>):(
           <>
-          <button onClick={()=>signIn()}> built in sign In page </button>
+          {/* <button onClick={()=>signIn()}> built in sign In page </button> */}
           <NavbarItem>
             <Link href="/sign-in">Login</Link>
           </NavbarItem>

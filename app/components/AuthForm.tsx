@@ -1,5 +1,5 @@
 import { Input } from "@nextui-org/react";
-import { FC, ReactNode } from "react";
+import { FC, ReactNode  ,FormHTMLAttributes} from "react";
 import AuthSubmitButton from "./AuthSubmitButton";
 import Link from "next/link";
 
@@ -9,6 +9,7 @@ interface Props {
   title?: string;
   children: ReactNode;
   footerItems?: { label: string; linkText: string; link: string }[];
+  action?: FormHTMLAttributes<HTMLFormElement> ['action'];
 }
 
 const AuthForm: FC<Props> = ({
@@ -16,11 +17,11 @@ const AuthForm: FC<Props> = ({
   btnLabel,
   error,
   children,
-  footerItems,
+  footerItems,action,
 }) => {
   return (
     <div className="space-y-6 max-w-96 mx-auto pt-20 sm:p-0 p-4">
-      <form className="space-y-4">
+      <form  action={action} className="space-y-4">
         <h1 className="text-2xl">{title}</h1>
         <div>{error ? <p className="text-red-500">{error}</p> : null}</div>
         {children}
