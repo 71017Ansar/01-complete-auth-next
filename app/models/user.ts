@@ -3,13 +3,13 @@ import { Schema ,models, ObjectId, model } from "mongoose";
 import { Interface } from "readline";
 
 
-Interface BaseUserDoc{
+interface BaseUserDoc{
     _id: ObjectId;
     name: string;
     email: string;
     provider : "credentials" | "google";
     password : string;
-    avatar ? : string {
+    avatar ? : {
         id? : string;
         url : string;
     };
@@ -18,15 +18,15 @@ Interface BaseUserDoc{
   }     
 
 
-  export  Interface CredentialsUserDoc extends BaseUserDoc{
+  export interface CredentialsUserDoc extends BaseUserDoc{
     
-    provider : " credentials ";
+    provider : "credentials";
     password : string ;
    
   }
-  export  Interface CredentialsUserDoc extends BaseUserDoc{
+  export  interface GoogleUserDoc extends BaseUserDoc{
     
-    provider : "google ";
+    provider : "google";
     password : never ;
    
   }
@@ -52,8 +52,13 @@ Interface BaseUserDoc{
     timestamps : true,
   })
    
+  export const createNewUser  = async( userInfo : UserDoc )=>{
+    return await UserModel.create();
 
-  const UserModel = model( "User" , userSchema)
+  }
+
+  const UserModel = models.User || model( "User" , userSchema);
+  export default UserModel;
    
 
 
