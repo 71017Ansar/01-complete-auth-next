@@ -1,6 +1,8 @@
 import { Schema ,models, ObjectId, model } from "mongoose";
+import { compareSync, genSaltSync, hashSync } from "bcrypt";
 
-import { Interface } from "readline";
+
+
 
 
 interface BaseUserDoc{
@@ -36,7 +38,7 @@ interface BaseUserDoc{
     compare : (password: string) => boolean;
   }
 
-  const UserSchema = new Schema< BaseUserDoc>({
+  const UserSchema = new Schema< BaseUserDoc ,{}, Method>({
     name : { type: String, trim : true, required: true  },
     email : { type: String, trim : true, required: true, unique : true },
     password : { type : String  },
@@ -51,6 +53,25 @@ interface BaseUserDoc{
   } ,{
     timestamps : true,
   })
+
+  UserSchema.pre("save", function (){
+    if(
+      this.isModified("password") &&
+      this.provider === "credentials" && 
+      this.password
+    ){
+      const salt = genSaltSync(10);
+      this.password = hashSync(this.password, salt);
+    }
+  })
+
+    UserSchema.methods.compare = function (password: string){
+      if(this.password){
+        return compareSync(password, this.password);
+      }else{
+        return false;
+      }
+    }
    
   export const createNewUser  = async( userInfo : CredentialsUserDoc )=>{
     return await UserModel.create(userInfo);

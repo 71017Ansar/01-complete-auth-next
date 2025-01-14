@@ -10,8 +10,16 @@ const newUserSchema = z.object ({
   password: z.string().min(8 , 'Password must be at least 8 characters long'),
 })
 
+interface AuthResponse {
+  success ?: boolean;
+  error ?: string;
+  errors ?: Record < string , string[] | undefined>
+
+
+}
+
  
- export const signUp = async(data : FormData) => {
+ export const signUp = async(   state : AuthResponse ,data : FormData) : Promise<AuthResponse > => {
 
  
    
@@ -20,7 +28,7 @@ const newUserSchema = z.object ({
     // const password  = (data.get('password'));
 
    const result = newUserSchema.safeParse({name :data.get('name'), email : data.get('email'), password : data.get('password') })
-   if(! result.success) return  console.log (result.error.formErrors.fieldErrors)
+   if (!result.success) return { success: false, errors: result.error.formErrors.fieldErrors };
 
     const {name, email, password} = result.data;
      await connectDB()
@@ -31,5 +39,8 @@ const newUserSchema = z.object ({
     name, email, password, verifed: false, provider: "credentials"
     
   }) 
+  return {
+    success: true, 
+  }
 
 }
