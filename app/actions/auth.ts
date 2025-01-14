@@ -1,7 +1,8 @@
   "use server"
 
+import { connectDB } from "../lib/db";
 import { createNewUser } from "../models/user";
-import { ObjectId } from 'mongodb';
+
 import {z} from 'zod';
 const newUserSchema = z.object ({
   name: z.string().min(3, 'Name must be at least 3 characters long'),
@@ -22,9 +23,11 @@ const newUserSchema = z.object ({
    if(! result.success) return  console.log (result.error.formErrors.fieldErrors)
 
     const {name, email, password} = result.data;
+     await connectDB()
 
 
   const user = await createNewUser ({
+  
     name, email, password, verifed: false, provider: "credentials"
     
   }) 

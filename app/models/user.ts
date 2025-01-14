@@ -4,7 +4,7 @@ import { Interface } from "readline";
 
 
 interface BaseUserDoc{
-    _id: ObjectId;
+     _id? : ObjectId;
     name: string;
     email: string;
     provider : "credentials" | "google";
@@ -36,7 +36,7 @@ interface BaseUserDoc{
     compare : (password: string) => boolean;
   }
 
-  const userSchema = new Schema< BaseUserDoc>({
+  const UserSchema = new Schema< BaseUserDoc>({
     name : { type: String, trim : true, required: true  },
     email : { type: String, trim : true, required: true, unique : true },
     password : { type : String  },
@@ -52,12 +52,12 @@ interface BaseUserDoc{
     timestamps : true,
   })
    
-  export const createNewUser  = async( userInfo : UserDoc )=>{
-    return await UserModel.create();
+  export const createNewUser  = async( userInfo : CredentialsUserDoc )=>{
+    return await UserModel.create(userInfo);
 
   }
 
-  const UserModel = models.User || model( "User" , userSchema);
+  const UserModel = models.User || model( "User" , UserSchema);
   export default UserModel;
    
 

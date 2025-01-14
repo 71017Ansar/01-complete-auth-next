@@ -1,6 +1,7 @@
 import {FC} from 'react';
 import AuthForm from '../components/AuthForm';
 import { Input } from '@nextui-org/react';
+import { signUp } from '../actions/auth';
 
 interface Props {
 }
@@ -11,7 +12,7 @@ const SignUp:   FC<Props> = () => {
     title="Sign Up"
     btnLabel="Sign Up"
 
-    action={}
+    action={signUp}
 
     footerItems={
         [
