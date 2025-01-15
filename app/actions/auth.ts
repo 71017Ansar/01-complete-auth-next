@@ -2,13 +2,31 @@
 
 import { connectDB } from "../lib/db";
 import { createNewUser } from "../models/user";
-
+import crypto from 'crypto';
 import {z} from 'zod';
+import VerificationTokenModel from "../models/verificationToken";
+import mail from '../utlis/mail';
 const newUserSchema = z.object ({
   name: z.string().min(3, 'Name must be at least 3 characters long'),
   email: z.string().email( 'Invalid email address'),
   password: z.string().min(8 , 'Password must be at least 8 characters long'),
 })
+
+const handlerVerificationToken = async (
+  user :({ id : string , email : string , name : string })
+) => {
+  const userId = user.id;
+  const token = crypto.randomBytes(36).toString("hex")
+  await connectDB();
+  await VerificationTokenModel.findOneAndDelete({ userId });
+  await VerificationTokenModel.create({ userId , token });
+  const link =  ` ${ process.env.VERIFICATION_LINK }?token=${token}&&userid=${userId}`  
+  await mail.sendVerificationMail()
+ 
+
+
+}
+
 
 interface AuthResponse {
   success ?: boolean;
@@ -39,6 +57,9 @@ interface AuthResponse {
     name, email, password, verifed: false, provider: "credentials"
     
   }) 
+
+await handlerVerificationToken()
+
   return {
     success: true, 
   }
