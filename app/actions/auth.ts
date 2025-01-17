@@ -21,7 +21,7 @@ const handlerVerificationToken = async (
   await VerificationTokenModel.findOneAndDelete({ userId });
   await VerificationTokenModel.create({ userId , token });
   const link =  ` ${ process.env.VERIFICATION_LINK }?token=${token}&&userid=${userId}`  
-  await mail.sendVerificationMail()
+  await mail.sendVerificationMail( { to : user.email , name : user.name , link } );
  
 
 
@@ -58,7 +58,7 @@ interface AuthResponse {
     
   }) 
 
-await handlerVerificationToken()
+await handlerVerificationToken( { id : user._id , email  , name } );
 
   return {
     success: true, 
